@@ -20,11 +20,22 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.kietvo123.snack17f8b854f4694a18a68ed4eeb3ae00c6"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ],
     "extra": {
       "eas": {
         "projectId": "79d86573-aba0-41df-9147-d7c1cd720dbf"

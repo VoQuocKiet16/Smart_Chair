@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Button, Text, StyleSheet, Image, Animated, PanResponder, TouchableOpacity } from 'react-native';
+import { View, Button, Text, StyleSheet, Image, Animated, PanResponder, TouchableOpacity, Dimensions, Platform } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const BOT_HEIGHT = SCREEN_HEIGHT * 0.5;
+const JOYSTICK_SIZE = Math.min(SCREEN_WIDTH, BOT_HEIGHT) * 0.5;
+const KNOB_SIZE = JOYSTICK_SIZE * 0.35;
 
 export default function App() {
   const [count, setCount] = useState(0);
@@ -47,6 +52,16 @@ export default function App() {
         useNativeDriver: false
       }).start();
       setCoords({ x: 0, y: 0 });
+
+      // Khi thả ra, tự động trả về 5 nếu count khác 5
+      if (countRef.current !== 5) {
+        setCount(5);
+        if (lastcountRef.current !== 5) {
+          fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V2?value=5');
+          setlastCount(5);
+          lastcountRef.current = 5;
+        }
+      }
     }
   })).current;
 
@@ -88,13 +103,16 @@ export default function App() {
     }
   }, []);    
 
-  const rawValue1 = responseData1 ? parseInt(responseData1[0]) : 0;
-  const rawValue2 = responseData2 ? parseInt(responseData2[0]) : 0;
+  const rawValue1 = responseData1 && !isNaN(parseInt(responseData1[0])) ? parseInt(responseData1[0]) : 0;
+  const rawValue2 = responseData2 && !isNaN(parseInt(responseData2[0])) ? parseInt(responseData2[0]) : 0;
 
-  const mapValue = (x, a, b, c, d) => { return ((x - a) / (b - a)) * (d - c) + c; };
+  const mapValue = (x, a, b, c, d) => {
+    if (isNaN(x)) return 0;
+    return ((x - a) / (b - a)) * (d - c) + c;
+  };
 
-  const mappedNumber1 = mapValue(rawValue1, 60, 130, 0, 100);
-  const mappedNumber2 = mapValue(rawValue2, 90, 100, 0, 100);
+  const mappedNumber1 = Math.max(0, Math.min(100, mapValue(rawValue1, 60, 130, 0, 100)));
+  const mappedNumber2 = Math.max(0, Math.min(100, mapValue(rawValue2, 90, 100, 0, 100)));
 
   return (
     <View style={styles.container}>
@@ -105,16 +123,25 @@ export default function App() {
 
         <View style={styles.gaugeContainer}>
           <AnimatedCircularProgress
-            size={150}
-            width={15}
+            size={SCREEN_WIDTH * 0.35}
+            width={SCREEN_WIDTH * 0.035}
             fill={mappedNumber1}
-            tintColor="#ff0000"
-            backgroundColor="#3d5875"
+            tintColor="#ff6b6b"
+            backgroundColor="#e0e0e0"
             rotation={180}
             lineCap="round"
           >
             {() => (
-              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+              <Text
+                style={{
+                  fontSize: SCREEN_WIDTH * 0.045,
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  width: '100%',
+                  color: '#ff6b6b',
+                  letterSpacing: 1.2,
+                }}
+              >
                 Heart {Math.round(rawValue1)}bpm
               </Text>
             )}
@@ -125,16 +152,16 @@ export default function App() {
           )}
 
           <AnimatedCircularProgress
-            size={150}
-            width={15}
+            size={SCREEN_WIDTH * 0.35}
+            width={SCREEN_WIDTH * 0.035}
             fill={mappedNumber2} 
-            tintColor="#00e0ff"
-            backgroundColor="#3d5875"
+            tintColor="#00b894"
+            backgroundColor="#e0e0e0"
             rotation={180}
             lineCap="round"
           >
             {() => (
-              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+              <Text style={{ fontSize: SCREEN_WIDTH * 0.045, fontWeight: 'bold', color: '#00b894', textAlign: 'center', width: '100%', letterSpacing: 1.2 }}>
                 Oxy {Math.round(rawValue2)}%
               </Text>
             )}
@@ -146,7 +173,8 @@ export default function App() {
       <View style={styles.bot}>
         <View style={styles.buttonRow}>
           <TouchableOpacity
-            style={[styles.customButton, styles.orangeButton]}
+            style={[styles.customButton, styles.redButton, styles.shadowButton]}
+            activeOpacity={0.8}
             onPressIn={() =>
               fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V6?value=1')
             }
@@ -154,11 +182,12 @@ export default function App() {
               fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V6?value=0')
             }
           >
-            <Text style={styles.buttonText}>Shrank</Text>
+            <Text style={styles.buttonText}>Shrink</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.customButton, styles.greenButton]}
+            style={[styles.customButton, styles.greenButton, styles.shadowButton]}
+            activeOpacity={0.8}
             onPressIn={() =>
               fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V7?value=1')
             }
@@ -171,7 +200,7 @@ export default function App() {
         </View>
 
         <Text style={styles.text}>X: {coords.x} | Y: {coords.y}</Text>
-        <Text style={styles.text}>count: {count} | lastcount: {lastcount}</Text>
+        <Text style={styles.countInlineText}>Count: {count} | Last: {lastcount}</Text>
         <View style={styles.joystickArea}>
           <Animated.View
             style={[styles.knob, { transform: pan.getTranslateTransform() }]}
@@ -186,94 +215,131 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-
-  top: {
-    width: '100%',
-    height: '50%',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    backgroundColor: '#f0f0f0'
-  },
-
-  bot: {
-    width: '100%',
-    height: '50%',
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'pink'
+    backgroundColor: '#f8fafc',
   },
-
+  top: {
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT * 0.5,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    backgroundColor: '#f1f2f6',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  bot: {
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT * 0.5,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    justifyContent: 'center',
+    backgroundColor: '#f8fafc',
+  },
   logo: {
-    marginTop: '5%',
-    height: '50%',
-    width: '100%',
+    marginTop: SCREEN_HEIGHT * 0.07,
+    height: SCREEN_HEIGHT * 0.15,
+    width: SCREEN_WIDTH * 0.5,
+    resizeMode: 'contain',
   },
-
   gaugeContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
     marginTop: 20,
-    width: '100%',
+    width: SCREEN_WIDTH * 0.9,
   },
-
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    width: '100%',
-    marginTop: 20,
+    width: SCREEN_WIDTH * 0.9,
+    marginTop: 10,
+    marginBottom: 10,
   },
-
   customButton: {
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 10,
-    minWidth: 120,
+    paddingVertical: SCREEN_HEIGHT * 0.015,
+    paddingHorizontal: SCREEN_WIDTH * 0.045,
+    borderRadius: 12,
+    minWidth: SCREEN_WIDTH * 0.22,
     alignItems: 'center',
+    marginHorizontal: 6,
+    backgroundColor: '#fff',
+    borderWidth: 1.2,
+    borderColor: '#e0e0e0',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    transition: 'all 0.2s',
   },
-
-  orangeButton: {
-    backgroundColor: '#FF9900',
+  redButton: {
+    backgroundColor: '#ff6b6b',
+    borderColor: '#ff6b6b',
   },
-
   greenButton: {
-    backgroundColor: '#00FF00',
+    backgroundColor: '#00b894',
+    borderColor: '#00b894',
   },
-
+  shadowButton: {
+    shadowColor: '#636e72',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 3,
+  },
   buttonText: {
-    color: '#111111',
-    fontSize: 20,
+    color: '#222f3e',
+    fontSize: SCREEN_WIDTH * 0.05,
     fontWeight: 'bold',
+    letterSpacing: 1.1,
   },
-
   text: {
-    marginTop: '4%',
-    fontSize: 15,
+    marginTop: SCREEN_HEIGHT * 0.02,
+    fontSize: SCREEN_WIDTH * 0.04,
+    color: '#636e72',
   },
-
   errorText: {
     color: 'red',
-    fontSize: 14,
+    fontSize: SCREEN_WIDTH * 0.035,
     marginTop: 10,
-    textAlign: 'center'
+    textAlign: 'center',
   },
-
   joystickArea: {
-    width: 250,
-    height: 250,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 100,
+    width: JOYSTICK_SIZE,
+    height: JOYSTICK_SIZE,
+    backgroundColor: '#f1f2f6',
+    borderRadius: JOYSTICK_SIZE / 2,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: 10,
+    shadowColor: '#00b894',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
   },
   knob: {
-    width: 80,
-    height: 80,
-    backgroundColor: '#3498db',
-    borderRadius: 40,
-    position: 'absolute'
-  }
+    width: KNOB_SIZE,
+    height: KNOB_SIZE,
+    backgroundColor: '#00b894',
+    borderRadius: KNOB_SIZE / 2,
+    position: 'absolute',
+    shadowColor: '#636e72',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    elevation: 4,
+    borderWidth: 3,
+    borderColor: '#fff',
+  },
+  countInlineText: {
+    marginTop: 2,
+    fontSize: SCREEN_WIDTH * 0.038,
+    color: '#636e72',
+    textAlign: 'center',
+    fontStyle: 'italic',
+    opacity: 0.8,
+  },
 });
