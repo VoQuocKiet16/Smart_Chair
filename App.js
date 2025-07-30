@@ -172,26 +172,51 @@ export default function App() {
           <Text style={styles.sectionTitle}>Điều Khiển Ghế</Text>
           
           {/* Action Buttons */}
-          <View style={styles.buttonRow}>
-            <CustomButton
-              onPressIn={() =>
-                fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V6?value=1')
-              }
-              onPressOut={() =>
-                fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V6?value=0')
-              }
-              title="Thu Nhỏ"
-            />
-
-            <CustomButton
-              onPressIn={() =>
-                fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V7?value=1')
-              }
-              onPressOut={() =>
-                fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V7?value=0')
-              }
-              title="Kéo Dài"
-            />
+          <View style={{ alignItems: 'center', width: '100%' }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 12 }}>
+              <CustomButton
+                onPressIn={() =>
+                  fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V6?value=1')
+                }
+                onPressOut={() =>
+                  fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V6?value=0')
+                }
+                title="Co ghế"
+                style={{ width: 90, marginHorizontal: 8 }}
+              />
+              <CustomButton
+                onPressIn={() =>
+                  fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V7?value=1')
+                }
+                onPressOut={() =>
+                  fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V7?value=0')
+                }
+                title="Duỗi ghế"
+                style={{ width: 90, marginHorizontal: 8 }}
+              />
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+              <CustomButton
+                onPressIn={() =>
+                  fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V8?value=1')
+                }
+                onPressOut={() =>
+                  fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V8?value=0')
+                }
+                title="Nâng Ghế"
+                style={{ width: 90, marginHorizontal: 8 }}
+              />
+              <CustomButton
+                onPressIn={() =>
+                  fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V9?value=1')
+                }
+                onPressOut={() =>
+                  fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V9?value=0')
+                }
+                title="Hạ Ghế"
+                style={{ width: 90, marginHorizontal: 8 }}
+              />
+            </View>
           </View>
 
           {/* Joystick Section */}
@@ -339,7 +364,8 @@ const styles = StyleSheet.create({
     fontSize: SCREEN_WIDTH * 0.04,
     fontWeight: '600',
     color: '#FFFFFF',
-    marginBottom: 15,
+    marginTop: 12,
+    marginBottom: 10,
     textAlign: 'center',
   },
   joystickContainer: {
