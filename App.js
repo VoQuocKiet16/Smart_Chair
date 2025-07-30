@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Button, Text, StyleSheet, Image, Animated, PanResponder, TouchableOpacity, Dimensions, Platform } from 'react-native';
+import { View, Button, Text, StyleSheet, Image, Animated, PanResponder, TouchableOpacity, Dimensions, Platform, StatusBar } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import { LinearGradient } from 'expo-linear-gradient';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import CustomButton from './components/Button';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BOT_HEIGHT = SCREEN_HEIGHT * 0.5;
@@ -116,98 +119,96 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-
-      <View style={styles.top}>
-        <Image style={styles.logo} source={require('./assets/snack-icon.png')} />
-        <View style={{ flexDirection: 'row' }}></View>
-
-        <View style={styles.gaugeContainer}>
-          <AnimatedCircularProgress
-            size={SCREEN_WIDTH * 0.35}
-            width={SCREEN_WIDTH * 0.035}
-            fill={mappedNumber1}
-            tintColor="#ff6b6b"
-            backgroundColor="#e0e0e0"
-            rotation={180}
-            lineCap="round"
-          >
-            {() => (
-              <Text
-                style={{
-                  fontSize: SCREEN_WIDTH * 0.045,
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                  width: '100%',
-                  color: '#ff6b6b',
-                  letterSpacing: 1.2,
-                }}
-              >
-                Heart {Math.round(rawValue1)}bpm
-              </Text>
-            )}
-          </AnimatedCircularProgress>
-
-          {heartRateError && (
-            <Text style={styles.errorText}>{heartRateError}</Text>
-          )}
-
-          <AnimatedCircularProgress
-            size={SCREEN_WIDTH * 0.35}
-            width={SCREEN_WIDTH * 0.035}
-            fill={mappedNumber2} 
-            tintColor="#00b894"
-            backgroundColor="#e0e0e0"
-            rotation={180}
-            lineCap="round"
-          >
-            {() => (
-              <Text style={{ fontSize: SCREEN_WIDTH * 0.045, fontWeight: 'bold', color: '#00b894', textAlign: 'center', width: '100%', letterSpacing: 1.2 }}>
-                Oxy {Math.round(rawValue2)}%
-              </Text>
-            )}
-          </AnimatedCircularProgress>
+      <StatusBar barStyle="light-content" backgroundColor="#1A202C" />
+      
+      {/* Header Section */}
+      <View style={styles.header}>
+        <View style={styles.headerContent}>
+          <Image style={styles.logo} source={require('./assets/snack-icon.png')} />
+          <Text style={styles.appTitle}>Hệ Thống Giám Sát Sức Khỏe</Text>
         </View>
-
       </View>
 
-      <View style={styles.bot}>
-        <View style={styles.buttonRow}>
-          <TouchableOpacity
-            style={[styles.customButton, styles.redButton, styles.shadowButton]}
-            activeOpacity={0.8}
-            onPressIn={() =>
-              fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V6?value=1')
-            }
-            onPressOut={() =>
-              fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V6?value=0')
-            }
-          >
-            <Text style={styles.buttonText}>Shrink</Text>
-          </TouchableOpacity>
+      {/* Main Content */}
+      <View style={styles.mainContent}>
+        {/* Health Metrics Section */}
+        <View style={styles.metricsSection}>
+          <Text style={styles.sectionTitle}>Chỉ Số Sức Khỏe</Text>
+          <View style={styles.gaugeContainer}>
+            <View style={styles.healthCard}>
+              <View style={styles.cardLeft}>
+                <View style={styles.iconContainer}>
+                  <Icon name="heart" size={SCREEN_WIDTH * 0.08} color="#00FFFF" />
+                </View>
+              </View>
+              <View style={styles.cardCenter}>
+                <Text style={styles.cardTitle}>Heart Rate</Text>
+                <View style={styles.valueContainer}>
+                  <Text style={[styles.cardValue, styles.heartValue]}>{Math.round(rawValue1)}</Text>
+                  <Text style={styles.cardUnit}>BPM</Text>
+                </View>
+              </View>
+            </View>
 
-          <TouchableOpacity
-            style={[styles.customButton, styles.greenButton, styles.shadowButton]}
-            activeOpacity={0.8}
-            onPressIn={() =>
-              fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V7?value=1')
-            }
-            onPressOut={() =>
-              fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V7?value=0')
-            }
-          >
-            <Text style={styles.buttonText}>Stretch</Text>
-          </TouchableOpacity>
+            <View style={styles.healthCard}>
+              <View style={styles.cardLeft}>
+                <View style={styles.iconContainer}>
+                  <Icon name="tint" size={SCREEN_WIDTH * 0.08} color="#00FFFF" />
+                </View>
+              </View>
+              <View style={styles.cardCenter}>
+                <Text style={styles.cardTitle}>Oxygen</Text>
+                <View style={styles.valueContainer}>
+                  <Text style={styles.cardValue}>{Math.round(rawValue2)}</Text>
+                  <Text style={styles.cardUnit}>%</Text>
+                </View>
+              </View>
+            </View>
+          </View>
         </View>
 
-        <Text style={styles.text}>X: {coords.x} | Y: {coords.y}</Text>
-        <Text style={styles.countInlineText}>Count: {count} | Last: {lastcount}</Text>
-        <View style={styles.joystickArea}>
-          <Animated.View
-            style={[styles.knob, { transform: pan.getTranslateTransform() }]}
-            {...panResponder.panHandlers}
-          />
-        </View>
+        {/* Control Section */}
+        <View style={styles.controlSection}>
+          <Text style={styles.sectionTitle}>Điều Khiển Ghế</Text>
+          
+          {/* Action Buttons */}
+          <View style={styles.buttonRow}>
+            <CustomButton
+              onPressIn={() =>
+                fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V6?value=1')
+              }
+              onPressOut={() =>
+                fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V6?value=0')
+              }
+              title="Thu Nhỏ"
+            />
 
+            <CustomButton
+              onPressIn={() =>
+                fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V7?value=1')
+              }
+              onPressOut={() =>
+                fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V7?value=0')
+              }
+              title="Kéo Dài"
+            />
+          </View>
+
+          {/* Joystick Section */}
+          <View style={styles.joystickSection}>
+            <Text style={styles.joystickTitle}>Điều Khiển Hướng</Text>
+            
+            <View style={styles.joystickContainer}>
+              <View style={styles.joystickArea}>
+                <Animated.View
+                  style={[styles.knob, { transform: pan.getTranslateTransform() }]}
+                  {...panResponder.panHandlers}
+                />
+                <View style={styles.joystickCenter} />
+              </View>
+            </View>
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -216,130 +217,249 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#1A202C',
   },
-  top: {
-    width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT * 0.5,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    backgroundColor: '#f1f2f6',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 4,
+  header: {
+    paddingTop: Platform.OS === 'ios' ? 50 : 30,
+    paddingBottom: 2,
+    paddingHorizontal: 20,
+    backgroundColor: '#1A202C',
   },
-  bot: {
-    width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT * 0.5,
+  headerContent: {
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    justifyContent: 'center',
-    backgroundColor: '#f8fafc',
   },
   logo: {
-    marginTop: SCREEN_HEIGHT * 0.07,
-    height: SCREEN_HEIGHT * 0.15,
-    width: SCREEN_WIDTH * 0.5,
+    height: SCREEN_HEIGHT * 0.08,
+    width: SCREEN_WIDTH * 0.3,
     resizeMode: 'contain',
+    marginBottom: 10,
+  },
+  appTitle: {
+    fontSize: SCREEN_WIDTH * 0.05,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    letterSpacing: 1,
+    marginBottom: 5,
+  },
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: 20,
+    backgroundColor: '#1A202C',
+  },
+  metricsSection: {
+    marginTop: 20,
+    marginBottom: 30,
+  },
+  sectionTitle: {
+    fontSize: SCREEN_WIDTH * 0.045,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: 8,
+    textAlign: 'left',
+    letterSpacing: 0.5,
   },
   gaugeContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: 'column',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
-    width: SCREEN_WIDTH * 0.9,
+    width: '100%',
+  },
+  gaugeCard: {
+    backgroundColor: '#f8fafc',
+    borderRadius: 20,
+    padding: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  gaugeContent: {
+    alignItems: 'center',
+  },
+  gaugeValue: {
+    fontSize: SCREEN_WIDTH * 0.055,
+    fontWeight: '700',
+    color: '#2d3436',
+    marginBottom: 2,
+  },
+  gaugeUnit: {
+    fontSize: SCREEN_WIDTH * 0.035,
+    fontWeight: '500',
+    color: '#636e72',
+    marginBottom: 5,
+  },
+  gaugeLabel: {
+    fontSize: SCREEN_WIDTH * 0.032,
+    fontWeight: '500',
+    color: '#636e72',
+    textAlign: 'center',
+  },
+  controlSection: {
+    flex: 1,
+    marginTop: -20, // Thêm margin âm để di chuyển lên trên
   },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    width: SCREEN_WIDTH * 0.9,
-    marginTop: 10,
-    marginBottom: 10,
+    marginBottom: 30,
   },
   customButton: {
-    paddingVertical: SCREEN_HEIGHT * 0.015,
-    paddingHorizontal: SCREEN_WIDTH * 0.045,
-    borderRadius: 12,
-    minWidth: SCREEN_WIDTH * 0.22,
+    borderRadius: 15,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
+    minWidth: SCREEN_WIDTH * 0.25,
+  },
+  buttonGradient: {
+    paddingVertical: SCREEN_HEIGHT * 0.018,
+    paddingHorizontal: SCREEN_WIDTH * 0.05,
     alignItems: 'center',
-    marginHorizontal: 6,
-    backgroundColor: '#fff',
-    borderWidth: 1.2,
-    borderColor: '#e0e0e0',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    transition: 'all 0.2s',
-  },
-  redButton: {
-    backgroundColor: '#ff6b6b',
-    borderColor: '#ff6b6b',
-  },
-  greenButton: {
-    backgroundColor: '#00b894',
-    borderColor: '#00b894',
-  },
-  shadowButton: {
-    shadowColor: '#636e72',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
-    elevation: 3,
+    backgroundColor: '#000000',
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: '#00FFFF',
   },
   buttonText: {
-    color: '#222f3e',
-    fontSize: SCREEN_WIDTH * 0.05,
-    fontWeight: 'bold',
-    letterSpacing: 1.1,
+    color: '#00FFFF',
+    fontSize: SCREEN_WIDTH * 0.045,
+    fontWeight: '600',
+    letterSpacing: 0.5,
   },
-  text: {
-    marginTop: SCREEN_HEIGHT * 0.02,
+  joystickSection: {
+    alignItems: 'center',
+  },
+  joystickTitle: {
     fontSize: SCREEN_WIDTH * 0.04,
-    color: '#636e72',
-  },
-  errorText: {
-    color: 'red',
-    fontSize: SCREEN_WIDTH * 0.035,
-    marginTop: 10,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: 15,
     textAlign: 'center',
+  },
+  joystickContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
   },
   joystickArea: {
     width: JOYSTICK_SIZE,
     height: JOYSTICK_SIZE,
-    backgroundColor: '#f1f2f6',
+    backgroundColor: '#2D3748',
     borderRadius: JOYSTICK_SIZE / 2,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
-    shadowColor: '#00b894',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+    borderWidth: 2,
+    borderColor: '#00FFFF',
   },
   knob: {
     width: KNOB_SIZE,
     height: KNOB_SIZE,
-    backgroundColor: '#00b894',
+    backgroundColor: '#00FFFF',
     borderRadius: KNOB_SIZE / 2,
     position: 'absolute',
-    shadowColor: '#636e72',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.18,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
     shadowRadius: 8,
-    elevation: 4,
+    elevation: 6,
     borderWidth: 3,
-    borderColor: '#fff',
+    borderColor: '#1A202C',
   },
-  countInlineText: {
-    marginTop: 2,
-    fontSize: SCREEN_WIDTH * 0.038,
-    color: '#636e72',
+  joystickCenter: {
+    width: 8,
+    height: 8,
+    backgroundColor: '#00FFFF',
+    borderRadius: 4,
+    opacity: 0.3,
+  },
+  errorText: {
+    color: '#e74c3c',
+    fontSize: SCREEN_WIDTH * 0.03,
+    marginTop: 8,
     textAlign: 'center',
-    fontStyle: 'italic',
-    opacity: 0.8,
+    fontWeight: '500',
+  },
+  healthCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2D3748',
+    borderRadius: 20,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 8,
+    borderWidth: 1,
+    borderColor: '#374151',
+    marginBottom: 15,
+  },
+  cardLeft: {
+    width: SCREEN_WIDTH * 0.15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconContainer: {
+    width: SCREEN_WIDTH * 0.16,
+    height: SCREEN_WIDTH * 0.16,
+    borderRadius: SCREEN_WIDTH * 0.08,
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#00FFFF',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.9,
+    shadowRadius: 25,
+    elevation: 20,
+    borderWidth: 1,
+    borderColor: '#00FFFF',
+  },
+  cardCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardTitle: {
+    fontSize: SCREEN_WIDTH * 0.055,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: 8,
+  },
+  valueContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  cardValue: {
+    fontSize: SCREEN_WIDTH * 0.075,
+    fontWeight: '700',
+    color: '#00FFFF',
+  },
+  heartValue: {
+    color: '#FF6B6B',
+  },
+  cardUnit: {
+    fontSize: SCREEN_WIDTH * 0.045,
+    fontWeight: '500',
+    color: '#A0AEC0',
+    marginLeft: 8,
+  },
+  cardRight: {
+    width: SCREEN_WIDTH * 0.1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  arrowIcon: {
+    fontSize: SCREEN_WIDTH * 0.05,
+    color: '#A0AEC0',
   },
 });
