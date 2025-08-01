@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Button, Text, StyleSheet, Image, Animated, PanResponder, TouchableOpacity, Dimensions, Platform, StatusBar } from 'react-native';
-import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomButton from './components/Button';
 
@@ -43,7 +41,7 @@ export default function App() {
       setCount(newCount);
 
       if (newCount !== lastcountRef.current && newCount !== 0) {
-        fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V2?value=' + newCount);
+        fetch('http://blynk.dke.vn:8888/coa3mDKOqqxFPKc0tJYvJFFCZ8g0dqLM/update/V2?value=' + newCount);
         setlastCount(newCount);               // cập nhật state
         lastcountRef.current = newCount;      // cập nhật ref
       }
@@ -60,7 +58,7 @@ export default function App() {
       if (countRef.current !== 5) {
         setCount(5);
         if (lastcountRef.current !== 5) {
-          fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V2?value=5');
+          fetch('http://blynk.dke.vn:8888/coa3mDKOqqxFPKc0tJYvJFFCZ8g0dqLM/update/V2?value=5');
           setlastCount(5);
           lastcountRef.current = 5;
         }
@@ -75,7 +73,7 @@ export default function App() {
 
   useEffect(() => {
     const intervalId1 = setInterval(() => {
-      fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/get/V0')
+      fetch('http://blynk.dke.vn:8888/coa3mDKOqqxFPKc0tJYvJFFCZ8g0dqLM/get/V0')
         .then(response => {
           // Kiểm tra nếu response không hợp lệ
           if (!response.ok) {
@@ -94,7 +92,7 @@ export default function App() {
     }, 1000);
 
     const intervalId2 = setInterval(() => {
-      fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/get/V1')
+      fetch('http://blynk.dke.vn:8888/coa3mDKOqqxFPKc0tJYvJFFCZ8g0dqLM/get/V1')
         .then(response => response.json())
         .then(data => setResponseData2(data))
         .catch(error => console.error(error));
@@ -176,20 +174,20 @@ export default function App() {
             <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 12 }}>
               <CustomButton
                 onPressIn={() =>
-                  fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V6?value=1')
+                  fetch('http://blynk.dke.vn:8888/coa3mDKOqqxFPKc0tJYvJFFCZ8g0dqLM/update/V6?value=1')
                 }
                 onPressOut={() =>
-                  fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V6?value=0')
+                  fetch('http://blynk.dke.vn:8888/coa3mDKOqqxFPKc0tJYvJFFCZ8g0dqLM/update/V6?value=0')
                 }
                 title="Co ghế"
                 style={{ width: 90, marginHorizontal: 8 }}
               />
               <CustomButton
                 onPressIn={() =>
-                  fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V7?value=1')
+                  fetch('http://blynk.dke.vn:8888/coa3mDKOqqxFPKc0tJYvJFFCZ8g0dqLM/update/V7?value=1')
                 }
                 onPressOut={() =>
-                  fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V7?value=0')
+                  fetch('http://blynk.dke.vn:8888/coa3mDKOqqxFPKc0tJYvJFFCZ8g0dqLM/update/V7?value=0')
                 }
                 title="Duỗi ghế"
                 style={{ width: 90, marginHorizontal: 8 }}
@@ -198,20 +196,20 @@ export default function App() {
             <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
               <CustomButton
                 onPressIn={() =>
-                  fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V8?value=1')
+                  fetch('http://blynk.dke.vn:8888/coa3mDKOqqxFPKc0tJYvJFFCZ8g0dqLM/update/V8?value=1')
                 }
                 onPressOut={() =>
-                  fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V8?value=0')
+                  fetch('http://blynk.dke.vn:8888/coa3mDKOqqxFPKc0tJYvJFFCZ8g0dqLM/update/V8?value=0')
                 }
                 title="Nâng Ghế"
                 style={{ width: 90, marginHorizontal: 8 }}
               />
               <CustomButton
                 onPressIn={() =>
-                  fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V9?value=1')
+                  fetch('http://blynk.dke.vn:8888/coa3mDKOqqxFPKc0tJYvJFFCZ8g0dqLM/update/V9?value=1')
                 }
                 onPressOut={() =>
-                  fetch('http://kenhsangtaotre.ddns.net:8080/P1BOGnIhVoPZRoUf6T3nn64rlp-YE5AS/update/V9?value=0')
+                  fetch('http://blynk.dke.vn:8888/coa3mDKOqqxFPKc0tJYvJFFCZ8g0dqLM/update/V9?value=0')
                 }
                 title="Hạ Ghế"
                 style={{ width: 90, marginHorizontal: 8 }}
